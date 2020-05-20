@@ -22,7 +22,7 @@ def parse_header(s: str):
     return header
 
 
-def process(cursor, block: str, file=sys.stdout, show_headers=True):
+def process(cursor, block: str, file=sys.stdout):
     """ Given sqlite cursor object and a block, evaluate it and return
     results to output. """
 
@@ -59,7 +59,7 @@ def process(cursor, block: str, file=sys.stdout, show_headers=True):
             if "caption" in header:
                 caption = "%s\n\n" % header["caption"]
             tablefmt = header.get("tablefmt", "psql")
-            headers = result[0].keys() if show_headers else []
+            headers = result[0].keys() if "hide_headers" not in header else []
             srep = tabulate(result, headers=headers, tablefmt=tablefmt)
             output_str = "```text\n%s%s\n```" % (caption, srep)
             if show_input:
