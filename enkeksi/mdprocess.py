@@ -43,6 +43,8 @@ def process(cursor, block: str, file=sys.stdout, show_headers=True):
             if show_input:
                 print(file=file)
             print(output_str, file=file)
+            print(file=file)
 
     else:
         print(block, file=file)
+        print(file=file)

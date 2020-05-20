@@ -10,8 +10,7 @@ def process_file(filename: str, file=sys.stdout):
     blocks = open(filename).read().split('\n\n')
     cursor = get_cursor()
     for block in blocks:
-        output = process(cursor, block.strip(), file=file)
-        print(output, file=file)
+        process(cursor, block, file=file)
 
 
 def main(argv=None, file=sys.stdout):
