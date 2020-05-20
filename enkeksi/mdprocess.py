@@ -1,6 +1,7 @@
 import sqlite3
 import sys
-import tabulate
+import shlex
+from tabulate import tabulate
 
 
 def get_cursor():
@@ -8,6 +9,17 @@ def get_cursor():
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
     return cursor
+
+
+def parse_header(s: str):
+    header = dict()
+    for arg in shlex.split(s.strip("`")):
+        s = arg.split("=")
+        if len(s) == 1:
+            header[s[0]] = True
+        else:
+            header[s[0]] = s[1]
+    return header
 
 
 def process(cursor, block: str, file=sys.stdout, show_headers=True):
@@ -21,25 +33,35 @@ def process(cursor, block: str, file=sys.stdout, show_headers=True):
         ind1 = block.find('\n')
         ind2 = block.rfind('\n')
         code = block[ind1+1:ind2]
-        first_line = block[:ind1]
+        header = parse_header(block[:ind1])
 
-        if "block" in first_line or code.count(';') > 1:
-            cursor.executescript(code)
-        else:
-            cursor.execute(code)
-        result = cursor.fetchall()
-
-        show_input = "hide_input" not in first_line
-        show_output = result and "hide_output" not in first_line
-
+        show_input = "hide_input" not in header
         if show_input:
             input_str = "```sql\n%s\n```" % code
             print(input_str, file=file)
 
+        try:
+            if "block" in header or code.count(';') > 1:
+                cursor.executescript(code)
+            else:
+                cursor.execute(code)
+        except Exception as err:
+            msg = "Failed to execute SQL query:"
+            print("\n```text\n%s\n\n%s" % (msg, code), file=file)
+            print("\nError message: %s\n```" % str(err), file=file)
+            return
+
+        result = cursor.fetchall()
+
+        show_output = result and "hide_output" not in header
         if show_output:
+            caption = ""
+            if "caption" in header:
+                caption = "%s\n\n" % header["caption"]
+            tablefmt = header.get("tablefmt", "psql")
             headers = result[0].keys() if show_headers else []
-            srep = tabulate.tabulate(result, headers=headers, tablefmt="psql")
-            output_str = "```text\n%s\n```" % srep
+            srep = tabulate(result, headers=headers, tablefmt=tablefmt)
+            output_str = "```text\n%s%s\n```" % (caption, srep)
             if show_input:
                 print(file=file)
             print(output_str, file=file)
