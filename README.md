@@ -108,6 +108,11 @@ SELECT COUNT(*) AS 'Number of movies in database' FROM Movies;
 The generated markdown file can then be added to your project documentation
 and hosted using e.g. mkdocs.
 
+## Contributing
+
+Contributions are welcome as usual. If you have any good idea, and especially,
+a better name for a package, raise an issue.
+
 [ci-img]: https://github.com/ahojukka5/enkeksi/workflows/Python%20CI/badge.svg
 [ci-url]: https://github.com/ahojukka5/enkeksi/actions
 [coveralls-img]: https://coveralls.io/repos/github/ahojukka5/enkeksi/badge.svg?branch=master
