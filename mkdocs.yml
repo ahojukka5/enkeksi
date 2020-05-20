@@ -2,6 +2,8 @@ site_name: enkeksi's documentation
 
 theme:
     name: readthedocs
+    navigation_depth: 1
+    prev_next_buttons_location: top
 
 nav:
   - Home: index.md
