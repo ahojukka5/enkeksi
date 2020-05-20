@@ -1,0 +1,8 @@
+site_name: enkeksi's documentation
+
+theme:
+    name: readthedocs
+
+nav:
+  - Home: index.md
+  - Demo: demo.md
