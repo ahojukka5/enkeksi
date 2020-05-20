@@ -135,6 +135,9 @@ SELECT * FROM Movies;
 ```
 ````
 
+As a result, sql query is not going to be rendered, but output is rendered with
+a caption "Table: Movies".
+
 ```sql hide_input caption="Table: Movies"
 SELECT * FROM Movies;
 ```
