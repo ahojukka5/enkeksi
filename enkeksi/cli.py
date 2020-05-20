@@ -3,7 +3,7 @@
 
 import sys
 import argparse
-from enkeksi import get_cursor, process
+from enkeksi.mdprocess import get_cursor, process
 
 
 def process_file(filename: str, file=sys.stdout):
