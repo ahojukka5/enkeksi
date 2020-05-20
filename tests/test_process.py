@@ -17,11 +17,11 @@ def output():
 
 def test_process(cursor, output):
     block = textwrap.dedent("""
-    ```sql
+    ```sql hide_headers
     SELECT 1+1;
     ```
     """)
-    process(cursor, block, output, show_headers=False)
+    process(cursor, block, output)
     assert "2" in output.getvalue()
 
 
@@ -31,7 +31,7 @@ def test_process_caption(cursor, output):
     SELECT 1+1;
     ```
     """)
-    process(cursor, block, output, show_headers=False)
+    process(cursor, block, output)
     assert "hello" in output.getvalue()
 
 
@@ -41,7 +41,7 @@ def test_process_failure(cursor, output):
     SELCT 1+1;
     ```
     """)
-    process(cursor, block, output, show_headers=False)
+    process(cursor, block, output)
     print("test_process_failure")
     print(output.getvalue())
     print("test_process_failure end")
@@ -52,7 +52,7 @@ def test_process_normal_text(cursor, output):
     block = textwrap.dedent("""
     Hello, World!
     """)
-    process(cursor, block, output, show_headers=False)
+    process(cursor, block, output)
     assert "Hello" in output.getvalue()
 
 
@@ -63,7 +63,7 @@ def test_block_process(cursor, output):
     INSERT INTO Foo (data) VALUES (1);
     ```
     """)
-    process(cursor, block, output, show_headers=False)
+    process(cursor, block, output)
     cursor.execute("SELECT * FROM Foo")
     assert len(cursor.fetchall()) == 1
 
