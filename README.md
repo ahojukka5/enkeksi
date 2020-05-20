@@ -1,5 +1,8 @@
 # enkeksi - Markdown-SQL evaluator
 
+[![Python CI][ci-img]][ci-url]
+[![Coverate Status][coveralls-img]][coveralls-url]
+
 Package author: Jukka Aho (@ahojukka5, ahojukka5@gmail.com)
 
 enkeksi takes a markdown-formatted input and executes the sql queries found in
@@ -13,3 +16,8 @@ enkeksi comes with a command line tool `markdown-sql-eval` which can be used
 to process markdown files efficiently.
 
 Project is hosted in GitHub: <https://github.com/ahojukka5/mdeval>.
+
+[ci-img]: https://github.com/ahojukka5/enkeksi/workflows/Python%20CI/badge.svg
+[ci-url]: https://github.com/ahojukka5/enkeksi/actions
+[coveralls-img]: https://coveralls.io/repos/github/ahojukka5/enkeksi/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/ahojukka5/enkeksi?branch=master
