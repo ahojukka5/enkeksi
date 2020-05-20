@@ -174,6 +174,9 @@ SELECT * FROM Movies;
 ```
 ````
 
+As a result, sql query is not going to be rendered, but output is rendered with
+a caption "Table: Movies".
+
 ```text
 Table: Movies
 
@@ -187,4 +190,3 @@ Table: Movies
 |    5 | Bambi      |   1942 |
 +------+------------+--------+
 ```
-
