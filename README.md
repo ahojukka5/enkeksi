@@ -18,6 +18,8 @@ to process markdown files efficiently.
 
 Project is hosted in GitHub: <https://github.com/ahojukka5/enkeksi>.
 
+Documentation is hotes in ReadTheDocs: <https://enkeksi.readthedocs.io/>.
+
 ## Installing package
 
 To install the most recent package from Python Package Index (PyPi), use git:
