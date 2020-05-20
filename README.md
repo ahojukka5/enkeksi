@@ -32,6 +32,82 @@ the GitHub:
 pip install git+git://github.com/ahojukka5/enkeksi.git
 ```
 
+## CLI Usage
+
+Consider the following demo markdown file:
+
+````markdown
+# Sample file
+
+Hello, this is a sample file. Below, we initialize some test data to sqlite
+database. It doesn't show in the final output, because of `hide_input` flag.
+
+```sql hide_input
+CREATE TABLE Movies (id INTEGER PRIMARY KEY, name TEXT, year INTEGER);
+INSERT INTO Movies (name, year) VALUES ("Snow White", 1937);
+INSERT INTO Movies (name, year) VALUES ("Fantasia", 1940);
+```
+
+To list the content of the database, we need to use `SELECT` in SQL query:
+
+```sql
+SELECT * FROM Movies;
+```
+
+The total number of rows in database is:
+
+```sql
+SELECT COUNT(*) AS 'Number of movies in database' FROM Movies;
+```
+````
+
+Processing the file with `markdown-sql-eval`:
+
+```bash
+markdown-sql-eval examples/example2.md
+```
+
+Result is:
+
+````markdown
+# Sample file
+
+Hello, this is a sample file. Below, we initialize some test data to sqlite
+database. It doesn't show in the final output, because of `hide_input` flag.
+
+To list the content of the database, we need to use `SELECT` in SQL query:
+
+```sql
+SELECT * FROM Movies;
+```
+
+```text
++------+------------+--------+
+|   id | name       |   year |
+|------+------------+--------|
+|    1 | Snow White |   1937 |
+|    2 | Fantasia   |   1940 |
++------+------------+--------+
+```
+
+The total number of rows in database is:
+
+```sql
+SELECT COUNT(*) AS 'Number of movies in database' FROM Movies;
+```
+
+```text
++--------------------------------+
+|   Number of movies in database |
+|--------------------------------|
+|                              2 |
++--------------------------------+
+```
+````
+
+The generated markdown file can then be added to your project documentation
+and hosted using e.g. mkdocs.
+
 [ci-img]: https://github.com/ahojukka5/enkeksi/workflows/Python%20CI/badge.svg
 [ci-url]: https://github.com/ahojukka5/enkeksi/actions
 [coveralls-img]: https://coveralls.io/repos/github/ahojukka5/enkeksi/badge.svg?branch=master
