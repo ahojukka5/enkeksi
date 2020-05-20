@@ -7,9 +7,13 @@ documentation where SQL queries are automatically executed to get example
 results in a dynamic manner. This way it is easy to spot from the non-working
 documentation is there is problems with the database.
 
-As a proof of concept, this project documentation itself is generated from a
-markdown file `docs/index.md` using the tools provided in this package.
+As a proof of concept, this project documentation demo page generated from a
+markdown file `docs/demo_tmpl.md` using the tools provided in this package.
 Documentation is built using mkdocs and hosted in readthedocs.io.
+
+Project source code is hosted in GitHub: <https://github.com/ahojukka5/enkeksi>
+
+Project documentation is hosted in ReadTheDocs: <http://enkeksi.readthedocs.io/>
 
 The basic idea is that user can write typical sql queries to the project
 documentation, using markdown format, for example:
