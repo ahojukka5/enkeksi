@@ -46,12 +46,3 @@ def process(cursor, block: str, file=sys.stdout, show_headers=True):
 
     else:
         print(block, file=file)
-
-
-def process_file(filename: str, file=sys.stdout):
-    blocks = open(filename).read().split('\n\n')
-    cursor = get_cursor()
-    for block in blocks:
-        output = process(cursor, block.strip())
-        if output:
-            print(output, file=file)
