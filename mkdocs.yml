@@ -7,4 +7,5 @@ theme:
 
 nav:
   - Home: index.md
+  - Demo (template): demo_tmpl.md
   - Demo: demo.md
