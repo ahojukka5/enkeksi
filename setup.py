@@ -64,6 +64,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    keywords='markdown sql evaluator',
     tests_require=test_deps,
     extras_require=extras,
     entry_points=entry_points,
