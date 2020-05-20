@@ -15,7 +15,22 @@ documentation is there is problems with the database.
 enkeksi comes with a command line tool `markdown-sql-eval` which can be used
 to process markdown files efficiently.
 
-Project is hosted in GitHub: <https://github.com/ahojukka5/mdeval>.
+Project is hosted in GitHub: <https://github.com/ahojukka5/enkeksi>.
+
+## Installing package
+
+To install the most recent package from Python Package Index (PyPi), use git:
+
+```bash
+pip install enkeksi
+```
+
+To install the development version, you can install the package directly from
+the GitHub:
+
+```bash
+pip install git+git://github.com/ahojukka5/enkeksi.git
+```
 
 [ci-img]: https://github.com/ahojukka5/enkeksi/workflows/Python%20CI/badge.svg
 [ci-url]: https://github.com/ahojukka5/enkeksi/actions
