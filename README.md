@@ -2,6 +2,7 @@
 
 [![Python CI][ci-img]][ci-url]
 [![Coverate Status][coveralls-img]][coveralls-url]
+[![Documentation Status][documentation-img]][documentation-url]
 
 Package author: Jukka Aho (@ahojukka5, ahojukka5@gmail.com)
 
@@ -117,3 +118,5 @@ a better name for a package, raise an issue.
 [ci-url]: https://github.com/ahojukka5/enkeksi/actions
 [coveralls-img]: https://coveralls.io/repos/github/ahojukka5/enkeksi/badge.svg?branch=master
 [coveralls-url]: https://coveralls.io/github/ahojukka5/enkeksi?branch=master
+[documentation-img]: https://readthedocs.org/projects/enkeksi/badge/?version=latest
+[documentation-url]: https://enkeksi.readthedocs.io/en/latest/?badge=latest
