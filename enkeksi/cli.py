@@ -3,11 +3,19 @@
 
 import sys
 import argparse
-from markdown_sql_eval import process_file
+from enkeksi import get_cursor, process
+
+
+def process_file(filename: str, file=sys.stdout):
+    blocks = open(filename).read().split('\n\n')
+    cursor = get_cursor()
+    for block in blocks:
+        output = process(cursor, block.strip(), file=file)
+        print(output, file=file)
 
 
 def main(argv=None, file=sys.stdout):
     parser = argparse.ArgumentParser()
     parser.add_argument('filename')
     args = parser.parse_args(argv or sys.argv[1:])
-    process_file(args.filename, file)
+    process_file(args.filename, file=file)
