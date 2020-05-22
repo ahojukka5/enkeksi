@@ -1,6 +1,7 @@
 # Assignment 1
 
-```sql hide_input
+```sql
+--hide-input
 CREATE TABLE Movies (id INTEGER PRIMARY KEY, name TEXT, year INTEGER);
 INSERT INTO Movies (name, year) VALUES ("Snow White", 1937);
 INSERT INTO Movies (name, year) VALUES ("Fantasia", 1940);
@@ -17,7 +18,8 @@ Keywords: **SELECT**
 
 ### Movies
 
-```sql hide_input
+```sql
+--hide-input --caption="Table: Movies"
 SELECT * FROM Movies;
 ```
 
