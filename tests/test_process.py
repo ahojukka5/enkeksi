@@ -15,9 +15,10 @@ def output():
     return io.StringIO()
 
 
-def test_process(cursor, output):
+def test_process_hide_headers(cursor, output):
     block = textwrap.dedent("""
-    ```sql hide_headers
+    ```sql
+    --hide-headers
     SELECT 1+1;
     ```
     """)
@@ -25,14 +26,26 @@ def test_process(cursor, output):
     assert "2" in output.getvalue()
 
 
-def test_process_caption(cursor, output):
+def test_process_show_caption(cursor, output):
     block = textwrap.dedent("""
-    ```sql caption="hello"
+    ```sql
+    --caption="hello"
     SELECT 1+1;
     ```
     """)
     process(cursor, block, output)
     assert "hello" in output.getvalue()
+
+
+def test_process_unknown_args(cursor, output):
+    block = textwrap.dedent("""
+    ```sql
+    --captain="hello"
+    SELECT 1+1;
+    ```
+    """)
+    process(cursor, block, output)
+    assert "Unknown" in output.getvalue()
 
 
 def test_process_failure(cursor, output):
