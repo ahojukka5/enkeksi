@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 import shlex
+import argparse
 from tabulate import tabulate
 
 
@@ -22,6 +23,17 @@ def parse_header(s: str):
     return header
 
 
+def parse_args(line: str):
+    parser = argparse.ArgumentParser("argsparser")
+    sf = "store_false"
+    parser.add_argument("--hide-input", dest="show_input", action=sf)
+    parser.add_argument("--hide-output", dest="show_output", action=sf)
+    parser.add_argument("--caption")
+    parser.add_argument("--table-format", dest="tablefmt", default="psql")
+    parser.add_argument("--hide-headers", dest="show_headers", action=sf)
+    return parser.parse_known_args(shlex.split(line))
+
+
 def process(cursor, block: str, file=sys.stdout):
     """ Given sqlite cursor object and a block, evaluate it and return
     results to output. """
@@ -33,15 +45,20 @@ def process(cursor, block: str, file=sys.stdout):
         ind1 = block.find('\n')
         ind2 = block.rfind('\n')
         code = block[ind1+1:ind2]
-        header = parse_header(block[:ind1])
+        args, _ = parse_args("")
+        if code.startswith("--"):
+            ind1 = code.find('\n')
+            args, u = parse_args(code[:ind1])
+            code = code[ind1+1:]
+            if len(u) > 0:
+                print("**Unknown arguments**: %s\n" % " ".join(u), file=file)
 
-        show_input = "hide_input" not in header
-        if show_input:
+        if args.show_input:
             input_str = "```sql\n%s\n```" % code
             print(input_str, file=file)
 
         try:
-            if "block" in header or code.count(';') > 1:
+            if code.count(';') > 1:
                 cursor.executescript(code)
             else:
                 cursor.execute(code)
@@ -53,16 +70,12 @@ def process(cursor, block: str, file=sys.stdout):
 
         result = cursor.fetchall()
 
-        show_output = result and "hide_output" not in header
-        if show_output:
-            caption = ""
-            if "caption" in header:
-                caption = "%s\n\n" % header["caption"]
-            tablefmt = header.get("tablefmt", "psql")
-            headers = result[0].keys() if "hide_headers" not in header else []
-            srep = tabulate(result, headers=headers, tablefmt=tablefmt)
+        if result and args.show_output:
+            caption = "%s\n\n" % args.caption if args.caption else ""
+            headers = result[0].keys() if args.show_headers else []
+            srep = tabulate(result, headers=headers, tablefmt=args.tablefmt)
             output_str = "```text\n%s%s\n```" % (caption, srep)
-            if show_input:
+            if args.show_input:
                 print(file=file)
             print(output_str, file=file)
             print(file=file)
