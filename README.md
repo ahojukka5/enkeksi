@@ -18,7 +18,7 @@ to process markdown files efficiently.
 
 Project is hosted in GitHub: <https://github.com/ahojukka5/enkeksi>.
 
-Documentation is hotes in ReadTheDocs: <https://enkeksi.readthedocs.io/>.
+Documentation is hosted in ReadTheDocs: <https://enkeksi.readthedocs.io/>.
 
 ## Installing package
 
@@ -140,7 +140,9 @@ With github formatting and headers removed
 ````
 
 The generated markdown file can then be added to your project documentation
-and hosted using e.g. mkdocs.
+and hosted using e.g. mkdocs. For that idea, take a look of `docs/demo.md`,
+which is hosted in [here](https://enkeksi.readthedocs.io/en/latest/demo/),
+and generated from `docs/demo_tmpl.md`.
 
 ## Contributing
 
