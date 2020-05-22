@@ -53,7 +53,7 @@ INSERT INTO Movies (name, year) VALUES ("Fantasia", 1940);
 ```
 
 To list the content of the database, we need to use `SELECT` in SQL query. We
-can use extra directive `--caption='Table: Movies'` to add caption to output:
+can use extra option `--caption='Table: Movies'` to add caption to output:
 
 ```sql
 --hide-input --caption='Table: Movies'
@@ -61,7 +61,7 @@ SELECT * FROM Movies;
 ```
 
 SQL results are formatted using [tabulate](https://pypi.org/project/tabulate/).
-Using directive `--table-format` we can change how the end results looks like.
+Using option `--table-format` we can change how the end results looks like.
 By default, `psgl` is used and there rest options can be found from tabulate's
 documentation. The total number of rows in database is:
 
@@ -70,7 +70,7 @@ documentation. The total number of rows in database is:
 SELECT COUNT(*) AS 'Number of movies in database' FROM Movies;
 ```
 
-Directive `--hide-headers` can be used to hide the header row of the result.
+Option `--hide-headers` can be used to hide the header row of the result.
 
 ```sql
 --table-format='github' --hide-headers --caption='With github formatting and headers removed'
@@ -93,7 +93,7 @@ Hello, this is a sample file. Below, we initialize some test data to sqlite
 database. It doesn't show in the final output, because of `--hide-input` flag.
 
 To list the content of the database, we need to use `SELECT` in SQL query. We
-can use extra directive `--caption='Table: Movies'` to add caption to output:
+can use extra option `--caption='Table: Movies'` to add caption to output:
 
 ```text
 Table: Movies
@@ -107,7 +107,7 @@ Table: Movies
 ```
 
 SQL results are formatted using [tabulate](https://pypi.org/project/tabulate/).
-Using directive `--table-format` we can change how the end results looks like.
+Using option `--table-format` we can change how the end results looks like.
 By default, `psgl` is used and there rest options can be found from tabulate's
 documentation. The total number of rows in database is:
 
@@ -125,7 +125,7 @@ With psql formatting
 +--------------------------------+
 ```
 
-Directive `--hide-headers` can be used to hide the header row of the result.
+Option `--hide-headers` can be used to hide the header row of the result.
 
 ```sql
 SELECT COUNT(*) AS 'Now shown' FROM Movies;
