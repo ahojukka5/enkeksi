@@ -5,8 +5,8 @@ import argparse
 from tabulate import tabulate
 
 
-def get_cursor():
-    connection = sqlite3.connect(":memory:")
+def get_cursor(target=":memory:"):
+    connection = sqlite3.connect(target)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
     return cursor
@@ -41,7 +41,12 @@ def process(cursor, block: str, file=sys.stdout):
     block = block.strip()
 
     if block.startswith("```sql"):
-        assert block.endswith("```")
+        if not block.endswith("```"):
+            msg = "**Warning**, block is not ending correctly, skipping:\n"
+            print(msg, file=file)
+            print(block, file=file)
+            print(file=file)
+            return
         ind1 = block.find('\n')
         ind2 = block.rfind('\n')
         code = block[ind1+1:ind2]
@@ -70,15 +75,17 @@ def process(cursor, block: str, file=sys.stdout):
 
         result = cursor.fetchall()
 
+        if args.show_input and not (result and args.show_output):
+            print(file=file)
+
         if result and args.show_output:
             caption = "%s\n\n" % args.caption if args.caption else ""
             headers = result[0].keys() if args.show_headers else []
             srep = tabulate(result, headers=headers, tablefmt=args.tablefmt)
-            output_str = "```text\n%s%s\n```" % (caption, srep)
+            output_str = "```text\n%s%s\n```\n" % (caption, srep)
             if args.show_input:
                 print(file=file)
             print(output_str, file=file)
-            print(file=file)
 
     else:
         print(block, file=file)
