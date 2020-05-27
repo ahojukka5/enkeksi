@@ -48,6 +48,15 @@ def test_process_unknown_args(cursor, output):
     assert "Unknown" in output.getvalue()
 
 
+def test_process_runaway(cursor, output):
+    block = textwrap.dedent("""
+    ```sql
+    SELECT 1+1;
+    """)
+    process(cursor, block, output)
+    assert "Warning" in output.getvalue()
+
+
 def test_process_failure(cursor, output):
     block = textwrap.dedent("""
     ```sql
