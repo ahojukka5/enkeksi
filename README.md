@@ -20,6 +20,8 @@ Project is hosted in GitHub: <https://github.com/ahojukka5/enkeksi>.
 
 Documentation is hosted in ReadTheDocs: <https://enkeksi.readthedocs.io/>.
 
+Releases are hosted in PyPi: <https://pypi.org/project/enkeksi/>.
+
 ## Installing package
 
 To install the most recent package from Python Package Index (PyPi), use git:
