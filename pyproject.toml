@@ -1,0 +1,80 @@
+[project]
+name = "enkeksi"
+version = "1.0.0"
+description = "Execute SQL fenced code blocks in Markdown and render their results back into Markdown."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Jukka Aho" }]
+requires-python = ">=3.10"
+keywords = ["markdown", "sql", "documentation", "sqlite", "duckdb", "literate-programming"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Documentation",
+  "Topic :: Database",
+]
+dependencies = [
+  "markdown-it-py>=3.0",
+  "tabulate>=0.9",
+]
+
+[project.optional-dependencies]
+duckdb = ["duckdb>=1.0"]
+
+[project.urls]
+Homepage = "https://github.com/ahojukka5/enkeksi"
+Documentation = "https://enkeksi.readthedocs.io/"
+Repository = "https://github.com/ahojukka5/enkeksi"
+Issues = "https://github.com/ahojukka5/enkeksi/issues"
+Changelog = "https://github.com/ahojukka5/enkeksi/blob/master/CHANGELOG.md"
+
+[project.scripts]
+enkeksi = "enkeksi.cli:entrypoint"
+markdown-sql-eval = "enkeksi.cli:entrypoint"
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+  "mypy>=1.14",
+  "pytest>=8.3",
+  "pytest-cov>=6.0",
+  "ruff>=0.9",
+]
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.6",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["enkeksi"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers --cov=enkeksi --cov-report=term-missing --cov-fail-under=90"
+testpaths = ["tests"]
+
+[[tool.mypy.overrides]]
+module = ["duckdb", "tabulate"]
+ignore_missing_imports = true
