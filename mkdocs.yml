@@ -1,8 +1,8 @@
-site_name: enkeksi
+site_name: sqlfence
 site_description: Execute SQL examples embedded in Markdown.
-site_url: https://enkeksi.readthedocs.io/
-repo_url: https://github.com/ahojukka5/enkeksi
-repo_name: ahojukka5/enkeksi
+site_url: https://sqlfence.readthedocs.io/
+repo_url: https://github.com/ahojukka5/sqlfence
+repo_name: ahojukka5/sqlfence
 strict: true
 
 theme:
@@ -17,7 +17,7 @@ nav:
   - SQL blocks: syntax.md
   - Command line: cli.md
   - Python API: api.md
-  - Migration from 0.x: migration.md
+  - Migration from enkeksi: migration.md
   - Releasing: releasing.md
   - Changelog: changelog.md
 
