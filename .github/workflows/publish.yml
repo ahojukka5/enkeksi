@@ -25,4 +25,15 @@ jobs:
         run: uv run --isolated --no-project --with dist/*.whl tests/smoke_test.py
       - name: Smoke test source distribution
         run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
-      - run: uv publish
+      - name: Publish to PyPI
+        env:
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          if [[ -n "$PYPI_PASSWORD" ]]; then
+            UV_PUBLISH_USERNAME="${PYPI_USERNAME:-__token__}" \
+              UV_PUBLISH_PASSWORD="$PYPI_PASSWORD" \
+              uv publish
+          else
+            uv publish
+          fi
