@@ -19,6 +19,8 @@ All notable changes are documented here. The project follows Semantic Versioning
 
 ### Changed
 
+- Renamed the distribution, import package, CLI, and lockfile root project from
+  `enkeksi` to `sqlfence` before the first stable PyPI publication.
 - SQL query results are Markdown tables by default.
 - SQL failures now produce a non-zero CLI exit code by default.
 - The package requires Python 3.10 or newer.
