@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 from pathlib import Path
 
-from enkeksi.cli import main
+from sqlfence.cli import main
 
 
 def test_cli_reads_stdin_and_writes_stdout() -> None:
@@ -23,7 +23,7 @@ def test_cli_check_returns_failure_for_invalid_sql() -> None:
         ["-", "--check"], stdin=io.StringIO("```sql\nBAD SQL;\n```\n"), stderr=stderr
     )
     assert exit_code == 1
-    assert "enkeksi:" in stderr.getvalue()
+    assert "sqlfence:" in stderr.getvalue()
 
 
 def test_cli_writes_output_file(tmp_path: Path) -> None:
