@@ -23,9 +23,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--in-place", action="store_true", help="Replace the input file atomically"
     )
     parser.add_argument("--database", default=":memory:", help="Database path")
-    parser.add_argument(
-        "--engine", choices=("sqlite", "duckdb"), default="sqlite"
-    )
+    parser.add_argument("--engine", choices=("sqlite", "duckdb"), default="sqlite")
     parser.add_argument(
         "--write",
         action="store_true",

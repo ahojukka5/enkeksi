@@ -110,9 +110,7 @@ def test_unknown_directive_is_an_error() -> None:
 
 
 def test_check_executes_without_rendering() -> None:
-    result = render_markdown(
-        "```sql\nSELECT 1;\n```\n", RenderOptions(check=True)
-    )
+    result = render_markdown("```sql\nSELECT 1;\n```\n", RenderOptions(check=True))
     assert result == ""
 
 
@@ -131,9 +129,7 @@ def test_file_database_is_read_only_by_default(tmp_path: Path) -> None:
 def test_file_database_can_be_written_explicitly(tmp_path: Path) -> None:
     database = tmp_path / "data.sqlite"
     source = "```sql hide-output\nCREATE TABLE data(value INTEGER);\n```\n"
-    render_markdown(
-        source, RenderOptions(database=str(database), read_only=False)
-    )
+    render_markdown(source, RenderOptions(database=str(database), read_only=False))
     connection = sqlite3.connect(database)
     assert connection.execute(
         "SELECT name FROM sqlite_master WHERE name='data'"
