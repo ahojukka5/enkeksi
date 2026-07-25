@@ -1,0 +1,33 @@
+name: Retag 1.0 once
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  retag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/retag-1.0-once.yml
+          git commit -m "Remove one-shot retag workflow"
+          git push origin HEAD:master
+      - name: Point v1.0.0 to the final release commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git tag -f -a v1.0.0 -m "enkeksi 1.0.0"
+          git push --force origin refs/tags/v1.0.0
+          gh release edit v1.0.0 \
+            --title "enkeksi 1.0.0" \
+            --notes "First stable release of the modernized enkeksi Markdown-SQL evaluator. See CHANGELOG.md for the complete feature and migration summary."
