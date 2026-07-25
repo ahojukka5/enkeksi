@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   pypi:
@@ -16,6 +15,9 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/enkeksi
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
       - name: Install uv
@@ -27,13 +29,4 @@ jobs:
       - name: Smoke test source distribution
         run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
       - name: Publish to PyPI
-        env:
-          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          token="${PYPI_API_TOKEN:-$PYPI_TOKEN}"
-          if [[ -n "$token" ]]; then
-            UV_PUBLISH_TOKEN="$token" uv publish
-          else
-            uv publish
-          fi
+        run: uv publish
