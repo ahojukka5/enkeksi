@@ -2,14 +2,14 @@
 
 ## One-time PyPI setup
 
-Configure a GitHub Actions Trusted Publisher on the existing PyPI project:
+Before the first upload, configure a pending GitHub Actions Trusted Publisher
+for the new `sqlfence` project on PyPI:
 
 - **Owner:** `ahojukka5`
-- **Repository:** `enkeksi`
+- **Repository:** `sqlfence`
 - **Workflow:** `publish.yml`
 - **Environment:** `pypi`
 
-The publisher is added from the PyPI project's **Manage → Publishing** page.
 No API token or password is stored in GitHub. The workflow receives a
 short-lived OIDC credential only while the publishing job runs.
 
@@ -31,9 +31,8 @@ short-lived OIDC credential only while the publishing job runs.
 
 4. Merge the release pull request after CI succeeds.
 5. Create and push an annotated `v<version>` tag and create a GitHub Release.
-6. Confirm that the `Publish release to PyPI` workflow builds and smoke-tests
-   both the wheel and source distribution before upload.
-7. Verify the published version on PyPI and install it in a clean environment.
+6. Confirm that `Publish release to PyPI` smoke-tests both distributions before upload.
+7. Verify the published version and install it in a clean environment.
 
-The publishing workflow can also be started manually with **Run workflow**.
-This is useful when a tag was created before Trusted Publishing was configured.
+The publishing workflow also supports **Run workflow**, which is useful after
+configuring a pending Trusted Publisher.

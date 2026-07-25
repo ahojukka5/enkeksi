@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from enkeksi import EnkeksiError, RenderOptions, render_markdown
-from enkeksi.core import split_sql_statements, strip_generated_output
+from sqlfence import RenderOptions, SqlfenceError, render_markdown
+from sqlfence.core import split_sql_statements, strip_generated_output
 
 
 def test_renders_query_as_markdown_table() -> None:
@@ -14,7 +14,7 @@ def test_renders_query_as_markdown_table() -> None:
     rendered = render_markdown(source)
     assert "|   one | word" in rendered
     assert "|     1 | two" in rendered
-    assert rendered.count("<!-- enkeksi:begin -->") == 1
+    assert rendered.count("<!-- sqlfence:begin -->") == 1
 
 
 def test_preserves_normal_markdown_and_blank_lines() -> None:
@@ -42,14 +42,25 @@ def test_info_string_directives() -> None:
     assert "42" in rendered
 
 
-def test_enkeksi_directive_comment() -> None:
+def test_sqlfence_directive_comment() -> None:
     source = """```sql
--- enkeksi: hide-input caption='Count'
+-- sqlfence: hide-input caption='Count'
 SELECT 2 AS value;
 ```
 """
     rendered = render_markdown(source)
     assert "**Count**" in rendered
+    assert "SELECT" not in rendered
+
+
+def test_legacy_enkeksi_directive_comment() -> None:
+    source = """```sql
+-- enkeksi: hide-input caption='Legacy'
+SELECT 5 AS value;
+```
+"""
+    rendered = render_markdown(source)
+    assert "**Legacy**" in rendered
     assert "SELECT" not in rendered
 
 
@@ -85,15 +96,25 @@ def test_rendering_is_idempotent() -> None:
 
 
 def test_strip_generated_output() -> None:
-    source = "before\n<!-- enkeksi:begin -->\nold\n<!-- enkeksi:end -->\nafter\n"
+    source = "before\n<!-- sqlfence:begin -->\nold\n<!-- sqlfence:end -->\nafter\n"
     stripped = strip_generated_output(source)
     assert "old" not in stripped
     assert "before" in stripped and "after" in stripped
 
 
+def test_legacy_enkeksi_marker_is_replaced() -> None:
+    source = (
+        "before\n<!-- enkeksi:begin -->\nold\n<!-- enkeksi:end -->\n"
+        "```sql\nSELECT 6 AS value;\n```\n"
+    )
+    rendered = render_markdown(source)
+    assert "old" not in rendered
+    assert "<!-- sqlfence:begin -->" in rendered
+
+
 def test_sql_error_has_source_line() -> None:
     source = "intro\n\n```sql\nSELCT 1;\n```\n"
-    with pytest.raises(EnkeksiError, match="line 3"):
+    with pytest.raises(SqlfenceError, match="line 3"):
         render_markdown(source)
 
 
@@ -101,11 +122,11 @@ def test_keep_going_embeds_error() -> None:
     rendered = render_markdown(
         "```sql\nSELCT 1;\n```\n", RenderOptions(keep_going=True)
     )
-    assert "enkeksi error:" in rendered
+    assert "sqlfence error:" in rendered
 
 
 def test_unknown_directive_is_an_error() -> None:
-    with pytest.raises(EnkeksiError, match="Unknown"):
+    with pytest.raises(SqlfenceError, match="Unknown"):
         render_markdown("```sql unknown-option\nSELECT 1;\n```\n")
 
 
@@ -122,7 +143,7 @@ def test_file_database_is_read_only_by_default(tmp_path: Path) -> None:
     connection.close()
 
     source = "```sql\nINSERT INTO values_table VALUES (1);\n```\n"
-    with pytest.raises(EnkeksiError, match="readonly"):
+    with pytest.raises(SqlfenceError, match="readonly"):
         render_markdown(source, RenderOptions(database=str(database)))
 
 
@@ -138,7 +159,7 @@ def test_file_database_can_be_written_explicitly(tmp_path: Path) -> None:
 
 
 def test_unsupported_engine() -> None:
-    with pytest.raises(EnkeksiError, match="Unsupported"):
+    with pytest.raises(SqlfenceError, match="Unsupported"):
         render_markdown("text", RenderOptions(engine="other"))
 
 

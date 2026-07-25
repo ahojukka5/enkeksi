@@ -1,4 +1,4 @@
-"""Command-line interface for enkeksi."""
+"""Command-line interface for sqlfence."""
 
 from __future__ import annotations
 
@@ -9,12 +9,12 @@ from pathlib import Path
 from typing import TextIO
 
 from . import __version__
-from .core import EnkeksiError, RenderOptions, render_markdown
+from .core import RenderOptions, SqlfenceError, render_markdown
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="enkeksi",
+        prog="sqlfence",
         description="Execute SQL fenced blocks in Markdown and render the results.",
     )
     parser.add_argument("input", help="Input Markdown file, or - for standard input")
@@ -56,7 +56,7 @@ def _read_input(filename: str, stdin: TextIO) -> str:
 
 
 def _write_atomic(path: Path, content: str) -> None:
-    temporary = path.with_suffix(path.suffix + ".enkeksi.tmp")
+    temporary = path.with_suffix(path.suffix + ".sqlfence.tmp")
     temporary.write_text(content, encoding="utf-8")
     temporary.replace(path)
 
@@ -87,8 +87,8 @@ def main(
                 default_table_format=args.table_format,
             ),
         )
-    except (OSError, EnkeksiError) as error:
-        print(f"enkeksi: {error}", file=stderr)
+    except (OSError, SqlfenceError) as error:
+        print(f"sqlfence: {error}", file=stderr)
         return 1
 
     if args.check:

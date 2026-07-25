@@ -6,11 +6,12 @@ All notable changes are documented here. The project follows Semantic Versioning
 
 ### Added
 
+- Published under the `sqlfence` distribution, import package, and CLI name.
 - Robust CommonMark parsing using `markdown-it-py`.
 - Idempotent generated-output regions for safe in-place rendering.
 - SQLite support with read-only file databases by default.
 - Optional DuckDB support through the `duckdb` extra.
-- `enkeksi` CLI with stdin/stdout, output files, atomic `--in-place`, `--check`,
+- `sqlfence` CLI with stdin/stdout, output files, atomic `--in-place`, `--check`,
   `--keep-going`, and explicit `--write` modes.
 - Typed public Python API and a PEP 561 `py.typed` marker.
 - Modern `uv` project with a reproducible lockfile, Ruff, mypy, pytest,
@@ -18,11 +19,14 @@ All notable changes are documented here. The project follows Semantic Versioning
 
 ### Changed
 
+- Renamed the distribution, import package, CLI, and lockfile root project from
+  `enkeksi` to `sqlfence` before the first stable PyPI publication.
 - SQL query results are Markdown tables by default.
 - SQL failures now produce a non-zero CLI exit code by default.
 - The package requires Python 3.10 or newer.
 
 ### Compatibility
 
-- The historical `markdown-sql-eval` command remains as an alias.
-- Version 0.x first-line directives remain supported.
+- The historical `enkeksi` and `markdown-sql-eval` commands remain aliases.
+- Legacy `enkeksi` directives and generated-output markers remain readable.
+- `EnkeksiError` remains an alias of `SqlfenceError` in the new Python API.

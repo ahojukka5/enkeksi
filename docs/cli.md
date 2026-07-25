@@ -1,7 +1,7 @@
 # Command line
 
 ```text
-enkeksi INPUT [--output FILE | --in-place] [options]
+sqlfence INPUT [--output FILE | --in-place] [options]
 ```
 
 `INPUT` may be `-` for standard input. Without an output option, rendered
@@ -16,4 +16,6 @@ Markdown is written to standard output.
 - `--keep-going`: embed errors and continue with later blocks.
 - `--table-format FORMAT`: change the default `tabulate` format.
 
-The `markdown-sql-eval` executable is retained as a compatibility alias.
+The historical `enkeksi` and `markdown-sql-eval` executables are retained as
+migration aliases. Their help and version output identify the program as
+`sqlfence`.
