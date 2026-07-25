@@ -200,8 +200,8 @@ def _connect(options: RenderOptions) -> Connection:
     if options.engine == "sqlite":
         if read_only and options.database != ":memory:":
             database = Path(options.database).resolve().as_uri() + "?mode=ro"
-            return sqlite3.connect(database, uri=True)
-        return sqlite3.connect(options.database)
+            return cast(Connection, sqlite3.connect(database, uri=True))
+        return cast(Connection, sqlite3.connect(options.database))
 
     if options.engine == "duckdb":
         try:
