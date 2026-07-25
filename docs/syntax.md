@@ -26,8 +26,15 @@ SELECT id, name FROM users ORDER BY id;
 | `caption='Text'` | Add a bold caption above the result. |
 | `table-format=github` | Select a `tabulate` output format. |
 
-The version 0.x first-line syntax remains supported. A preferred explicit form
-is `-- enkeksi: hide-input caption='Result'`.
+The preferred explicit first-line form is
+`-- sqlfence: hide-input caption='Result'`. The legacy `-- enkeksi:` form is
+also supported.
+
+## Generated output markers
+
+Rendered regions use `<!-- sqlfence:begin -->` and
+`<!-- sqlfence:end -->`. Legacy `enkeksi` regions are removed and replaced on
+the next render, preserving idempotent in-place updates.
 
 ## Multiple statements
 
