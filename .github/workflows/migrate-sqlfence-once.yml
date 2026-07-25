@@ -1,0 +1,246 @@
+name: Migrate package to sqlfence once
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/rename-package-sqlfence
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          python-version: "3.14"
+      - name: Rename distribution, package, CLI, and documentation
+        run: |
+          git mv src/enkeksi src/sqlfence
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          from textwrap import dedent
+
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          text_suffixes = {".md", ".py", ".toml", ".yml", ".yaml"}
+          replacements = (
+              ("EnkeksiError", "SqlfenceError"),
+              ("ahojukka5/enkeksi", "ahojukka5/sqlfence"),
+              ("enkeksi.readthedocs.io", "sqlfence.readthedocs.io"),
+              ("pypi.org/project/enkeksi", "pypi.org/project/sqlfence"),
+              ("pypi.org/p/enkeksi", "pypi.org/p/sqlfence"),
+              ("enkeksi", "sqlfence"),
+          )
+          for name in tracked:
+              path = Path(name)
+              if not path.exists() or path.suffix not in text_suffixes:
+                  continue
+              text = path.read_text(encoding="utf-8")
+              for old, new in replacements:
+                  text = text.replace(old, new)
+              path.write_text(text, encoding="utf-8")
+
+          core = Path("src/sqlfence/core.py")
+          text = core.read_text(encoding="utf-8")
+          text = text.replace(
+              'r"\\n*<!-- sqlfence:begin -->.*?<!-- sqlfence:end -->\\n*", re.DOTALL',
+              'r"\\n*<!-- (sqlfence|enkeksi):begin -->.*?<!-- \\1:end -->\\n*", re.DOTALL',
+          )
+          text = text.replace(
+              'if first.lower().startswith("-- sqlfence:"):',
+              'if first.lower().startswith(("-- sqlfence:", "-- enkeksi:")):',
+          )
+          core.write_text(text, encoding="utf-8")
+
+          Path("src/sqlfence/__init__.py").write_text(
+              dedent(
+                  '''\
+                  """Public API for sqlfence."""
+
+                  from .core import RenderOptions, SqlfenceError, render_markdown
+
+                  EnkeksiError = SqlfenceError
+
+                  __all__ = [
+                      "EnkeksiError",
+                      "RenderOptions",
+                      "SqlfenceError",
+                      "render_markdown",
+                  ]
+                  __version__ = "1.0.0"
+                  '''
+              ),
+              encoding="utf-8",
+          )
+
+          pyproject = Path("pyproject.toml")
+          text = pyproject.read_text(encoding="utf-8")
+          text = text.replace(
+              '[project.scripts]\nsqlfence = "sqlfence.cli:entrypoint"\nmarkdown-sql-eval = "sqlfence.cli:entrypoint"',
+              '[project.scripts]\nsqlfence = "sqlfence.cli:entrypoint"\nenkeksi = "sqlfence.cli:entrypoint"\nmarkdown-sql-eval = "sqlfence.cli:entrypoint"',
+          )
+          pyproject.write_text(text, encoding="utf-8")
+
+          Path("docs/migration.md").write_text(
+              dedent(
+                  '''\
+                  # Migration from enkeksi 0.x
+
+                  The project and distribution are now named `sqlfence`. Install the new package and use the new command and import path:
+
+                  ```console
+                  uv tool install sqlfence
+                  sqlfence input.md --output output.md
+                  ```
+
+                  ```python
+                  from sqlfence import RenderOptions, SqlfenceError, render_markdown
+                  ```
+
+                  The historical `enkeksi` and `markdown-sql-eval` executables remain aliases. Existing `-- enkeksi:` directives and `<!-- enkeksi:begin/end -->` generated regions are recognized, then rendered using the new `sqlfence` markers. `EnkeksiError` remains an alias of `SqlfenceError` in the new Python API.
+
+                  Other behavior changes from 0.x:
+
+                  - Python 3.10 or newer is required.
+                  - SQL errors produce a non-zero exit status.
+                  - File databases are read-only by default; use `--write` only when changes are intended.
+                  - Markdown tables are the default output format.
+                  '''
+              ),
+              encoding="utf-8",
+          )
+
+          Path("docs/releasing.md").write_text(
+              dedent(
+                  '''\
+                  # Releasing
+
+                  ## One-time PyPI setup
+
+                  Before the first upload, configure a pending GitHub Actions Trusted Publisher for the new `sqlfence` project on PyPI:
+
+                  - **Owner:** `ahojukka5`
+                  - **Repository:** `sqlfence`
+                  - **Workflow:** `publish.yml`
+                  - **Environment:** `pypi`
+
+                  No API token or password is stored in GitHub. The workflow receives a short-lived OIDC credential only while the publishing job runs.
+
+                  ## Release checklist
+
+                  1. Update the version in `pyproject.toml` with `uv version`.
+                  2. Update `CHANGELOG.md` and documentation.
+                  3. Run all quality gates:
+
+                     ```console
+                     uv sync --all-groups
+                     uv run ruff format --check .
+                     uv run ruff check .
+                     uv run mypy
+                     uv run pytest
+                     uv build
+                     uv run --group docs mkdocs build --strict
+                     ```
+
+                  4. Merge the release pull request after CI succeeds.
+                  5. Create and push an annotated `v<version>` tag and create a GitHub Release.
+                  6. Confirm that `Publish release to PyPI` smoke-tests both distributions before upload.
+                  7. Verify the published version and install it in a clean environment.
+
+                  The publishing workflow also supports **Run workflow**, which is useful after configuring a pending Trusted Publisher.
+                  '''
+              ),
+              encoding="utf-8",
+          )
+
+          changelog = Path("CHANGELOG.md")
+          text = changelog.read_text(encoding="utf-8")
+          text = text.replace(
+              "### Added\n",
+              "### Added\n\n- Published under the `sqlfence` distribution, import package, and CLI name.\n",
+              1,
+          )
+          text = text.replace(
+              "- The historical `markdown-sql-eval` command remains as an alias.",
+              "- The historical `enkeksi` and `markdown-sql-eval` commands remain aliases.\n- Legacy `enkeksi` directives and generated-output markers remain readable.",
+          )
+          changelog.write_text(text, encoding="utf-8")
+
+          readme = Path("README.md")
+          text = readme.read_text(encoding="utf-8")
+          text = text.replace(
+              "The historical command name `markdown-sql-eval` remains available as\nan alias.",
+              "The historical command names `enkeksi` and `markdown-sql-eval` remain\navailable as migration aliases.",
+          )
+          readme.write_text(text, encoding="utf-8")
+
+          tests = Path("tests/test_core.py")
+          text = tests.read_text(encoding="utf-8")
+          text += dedent(
+              '''
+
+              def test_legacy_enkeksi_directive_comment() -> None:
+                  source = """```sql
+              -- enkeksi: hide-input caption='Legacy'
+              SELECT 5 AS value;
+              ```
+              """
+                  rendered = render_markdown(source)
+                  assert "**Legacy**" in rendered
+                  assert "SELECT" not in rendered
+
+
+              def test_legacy_enkeksi_marker_is_replaced() -> None:
+                  source = (
+                      "before\\n<!-- enkeksi:begin -->\\nold\\n<!-- enkeksi:end -->\\n"
+                      "```sql\\nSELECT 6 AS value;\\n```\\n"
+                  )
+                  rendered = render_markdown(source)
+                  assert "old" not in rendered
+                  assert "<!-- sqlfence:begin -->" in rendered
+              '''
+          )
+          tests.write_text(text, encoding="utf-8")
+          PY
+      - name: Refresh lockfile and format
+        run: |
+          uv lock
+          uv sync --all-groups
+          uv run ruff format .
+          uv run ruff check --fix .
+          uv run ruff format .
+      - name: Validate renamed package
+        run: |
+          uv run ruff format --check .
+          uv run ruff check .
+          uv run mypy
+          uv run pytest
+          uv build
+          uv run --group docs mkdocs build --strict
+          uv run sqlfence examples/example.md --check
+          uv run enkeksi --version
+          uv run markdown-sql-eval --version
+      - name: Commit migration to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Rename package to sqlfence"
+          git push origin HEAD:agent/rename-package-sqlfence
+      - name: Remove orchestration workflow from master
+        if: always()
+        run: |
+          git fetch origin master
+          git worktree add /tmp/sqlfence-master origin/master
+          cd /tmp/sqlfence-master
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/migrate-sqlfence-once.yml
+          git commit -m "Remove one-shot migration workflow"
+          git push origin HEAD:master
