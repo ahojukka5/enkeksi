@@ -1,1 +1,14 @@
-site
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+site/
+*.enkeksi.tmp

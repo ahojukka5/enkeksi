@@ -1,11 +1,26 @@
-site_name: enkeksi's documentation
+site_name: enkeksi
+site_description: Execute SQL examples embedded in Markdown.
+site_url: https://enkeksi.readthedocs.io/
+repo_url: https://github.com/ahojukka5/enkeksi
+repo_name: ahojukka5/enkeksi
+strict: true
 
 theme:
-    name: readthedocs
-    navigation_depth: 1
-    prev_next_buttons_location: top
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
 
 nav:
   - Home: index.md
-  - Demo (template): demo_tmpl.md
-  - Demo: demo.md
+  - Getting started: getting-started.md
+  - SQL blocks: syntax.md
+  - Command line: cli.md
+  - Python API: api.md
+  - Migration from 0.x: migration.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
