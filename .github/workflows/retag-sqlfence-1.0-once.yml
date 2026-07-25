@@ -1,0 +1,39 @@
+name: Align sqlfence 1.0 release once
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/retag-sqlfence-1.0-once.yml
+          git commit -m "Remove one-shot sqlfence release workflow"
+          git push origin HEAD:master
+      - name: Align v1.0.0 tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git tag -f -a v1.0.0 -m "sqlfence 1.0.0"
+          git push --force origin refs/tags/v1.0.0
+          if gh release view v1.0.0 >/dev/null 2>&1; then
+            gh release edit v1.0.0 \
+              --title "sqlfence 1.0.0" \
+              --notes "First stable release of sqlfence, a modern Markdown-SQL evaluator with SQLite and optional DuckDB support. The former enkeksi CLI and legacy document markers remain supported for migration. See CHANGELOG.md for details."
+          else
+            gh release create v1.0.0 \
+              --title "sqlfence 1.0.0" \
+              --notes "First stable release of sqlfence, a modern Markdown-SQL evaluator with SQLite and optional DuckDB support. The former enkeksi CLI and legacy document markers remain supported for migration. See CHANGELOG.md for details."
+          fi
