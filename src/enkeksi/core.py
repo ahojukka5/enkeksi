@@ -5,9 +5,10 @@ from __future__ import annotations
 import re
 import shlex
 import sqlite3
+from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, Protocol, Sequence, cast
+from typing import Any, Protocol, cast
 
 from markdown_it import MarkdownIt
 from tabulate import tabulate
