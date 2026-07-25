@@ -1,6 +1,6 @@
-# enkeksi
+# sqlfence
 
-`enkeksi` executes SQL fenced code blocks in ordinary Markdown and inserts the
+`sqlfence` executes SQL fenced code blocks in ordinary Markdown and inserts the
 results as Markdown tables. It is designed for tested database documentation,
 README examples, generated reports, and CI checks.
 
