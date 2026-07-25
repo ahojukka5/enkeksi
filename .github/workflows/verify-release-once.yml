@@ -1,0 +1,74 @@
+name: Verify release once
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+      - name: Verify GitHub Actions and PyPI
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=""
+          status=""
+          conclusion=""
+          for _ in $(seq 1 60); do
+            row=$(gh api repos/${{ github.repository }}/actions/runs \
+              --jq '[.workflow_runs[] | select(.name == "Publish release to PyPI")][0] | [.id, .status, (.conclusion // "")] | @tsv')
+            IFS=$'\t' read -r run_id status conclusion <<< "$row"
+            if [[ "$status" == "completed" ]]; then
+              break
+            fi
+            sleep 5
+          done
+
+          {
+            echo "run_id=$run_id"
+            echo "status=$status"
+            echo "conclusion=$conclusion"
+          } > .release-verification.txt
+
+          if [[ "$status" == "completed" && "$conclusion" != "success" ]]; then
+            gh run view "$run_id" --log-failed >> .release-verification.txt 2>&1 || true
+          fi
+
+          python - <<'PY' >> .release-verification.txt
+          import json
+          import time
+          import urllib.request
+
+          version = "unknown"
+          releases = []
+          for _ in range(60):
+              try:
+                  with urllib.request.urlopen(
+                      "https://pypi.org/pypi/enkeksi/json", timeout=20
+                  ) as response:
+                      data = json.load(response)
+                  version = data["info"]["version"]
+                  releases = sorted(data["releases"])
+                  if "1.0.0" in releases:
+                      break
+              except Exception as error:
+                  version = f"error: {error}"
+              time.sleep(5)
+          print(f"pypi_version={version}")
+          print(f"pypi_has_1.0.0={'1.0.0' in releases}")
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/verify-release-once.yml
+          git add .release-verification.txt
+          git commit -m "Record release verification"
+          git push origin HEAD:master
