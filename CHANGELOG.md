@@ -12,9 +12,9 @@ All notable changes are documented here. The project follows Semantic Versioning
 - Optional DuckDB support through the `duckdb` extra.
 - `enkeksi` CLI with stdin/stdout, output files, atomic `--in-place`, `--check`,
   `--keep-going`, and explicit `--write` modes.
-- Typed public Python API.
-- Modern `uv` project, Ruff, mypy, pytest, coverage, MkDocs, CI, and trusted
-  PyPI publishing workflow.
+- Typed public Python API and a PEP 561 `py.typed` marker.
+- Modern `uv` project with a reproducible lockfile, Ruff, mypy, pytest,
+  coverage, MkDocs, CI, and a PyPI publishing workflow.
 
 ### Changed
 
