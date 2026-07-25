@@ -7,7 +7,7 @@ import shlex
 import sqlite3
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Any, Protocol, Sequence
+from typing import Any, Protocol, Sequence, cast
 
 from markdown_it import MarkdownIt
 from tabulate import tabulate
@@ -204,12 +204,12 @@ def _connect(options: RenderOptions) -> Connection:
 
     if options.engine == "duckdb":
         try:
-            import duckdb  # type: ignore[import-not-found]
+            import duckdb
         except ImportError as error:
             raise EnkeksiError(
                 "DuckDB support is optional; install it with `uv add enkeksi[duckdb]`."
             ) from error
-        return duckdb.connect(options.database, read_only=read_only)
+        return cast(Connection, duckdb.connect(options.database, read_only=read_only))
 
     raise EnkeksiError(f"Unsupported database engine: {options.engine}")
 
