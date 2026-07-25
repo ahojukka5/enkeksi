@@ -18,6 +18,7 @@ nav:
   - Command line: cli.md
   - Python API: api.md
   - Migration from 0.x: migration.md
+  - Releasing: releasing.md
   - Changelog: changelog.md
 
 markdown_extensions:
