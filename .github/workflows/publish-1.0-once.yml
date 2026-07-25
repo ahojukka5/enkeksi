@@ -1,0 +1,60 @@
+name: Publish enkeksi 1.0 once
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          python-version: "3.14"
+      - name: Clean one-shot release files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .release-diagnostic.txt .release-verification.txt
+          git rm .github/workflows/publish-1.0-once.yml
+          git add -A
+          git commit -m "Remove release diagnostics"
+          git push origin HEAD:master
+      - name: Build distributions
+        run: uv build
+      - name: Smoke test wheel
+        run: uv run --isolated --no-project --with dist/*.whl tests/smoke_test.py
+      - name: Smoke test source distribution
+        run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
+      - name: Publish and record result
+        env:
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          set +e
+          if [[ -n "$PYPI_PASSWORD" ]]; then
+            UV_PUBLISH_USERNAME="${PYPI_USERNAME:-__token__}" \
+              UV_PUBLISH_PASSWORD="$PYPI_PASSWORD" \
+              uv publish > /tmp/publish.log 2>&1
+          else
+            uv publish > /tmp/publish.log 2>&1
+          fi
+          rc=$?
+          set -e
+          cat /tmp/publish.log
+          {
+            echo "exit_code=$rc"
+            cat /tmp/publish.log
+          } > .publish-result.txt
+          git add .publish-result.txt
+          git commit -m "Record PyPI publication result"
+          git push origin HEAD:master
+          exit "$rc"
