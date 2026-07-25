@@ -1,25 +1,25 @@
-# enkeksi
+# sqlfence
 
-[![CI](https://github.com/ahojukka5/enkeksi/actions/workflows/ci.yml/badge.svg)](https://github.com/ahojukka5/enkeksi/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/enkeksi.svg)](https://pypi.org/project/enkeksi/)
-[![Python](https://img.shields.io/pypi/pyversions/enkeksi.svg)](https://pypi.org/project/enkeksi/)
+[![CI](https://github.com/ahojukka5/sqlfence/actions/workflows/ci.yml/badge.svg)](https://github.com/ahojukka5/sqlfence/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/sqlfence.svg)](https://pypi.org/project/sqlfence/)
+[![Python](https://img.shields.io/pypi/pyversions/sqlfence.svg)](https://pypi.org/project/sqlfence/)
 
 **Executable SQL examples for ordinary Markdown files.**
 
-`enkeksi` finds fenced `sql` blocks, executes them against SQLite or DuckDB,
+`sqlfence` finds fenced `sql` blocks, executes them against SQLite or DuckDB,
 and writes the results back as Markdown tables. It is intentionally smaller
 than a notebook system: Markdown goes in and Markdown comes out.
 
 ## Install
 
 ```console
-uv tool install enkeksi
+uv tool install sqlfence
 ```
 
 DuckDB support is optional:
 
 ```console
-uv tool install 'enkeksi[duckdb]'
+uv tool install 'sqlfence[duckdb]'
 ```
 
 ## Example
@@ -43,18 +43,18 @@ SELECT * FROM movies ORDER BY year;
 Render it:
 
 ```console
-enkeksi report.md --output report-rendered.md
+sqlfence report.md --output report-rendered.md
 ```
 
 Use `--check` in CI to verify every SQL example without creating output:
 
 ```console
-enkeksi report.md --check
+sqlfence report.md --check
 ```
 
 File-backed databases are opened read-only unless `--write` is explicitly
-provided. The historical command name `markdown-sql-eval` remains available as
-an alias.
+provided. The historical command names `enkeksi` and `markdown-sql-eval`
+remain available as migration aliases.
 
 ## Directives
 
@@ -66,14 +66,14 @@ SELECT 42 AS answer;
 ```
 ````
 
-The compatible first-line syntax is also supported:
+The preferred explicit first-line form is:
 
 ```sql
---hide-input --caption='Result' --table-format=github
+-- sqlfence: hide-input caption='Result' table-format=github
 ```
 
-Available directives are `hide-input`, `hide-output`, `hide-headers`,
-`caption`, and `table-format`.
+Legacy `-- enkeksi:` directives are also recognized. Available directives are
+`hide-input`, `hide-output`, `hide-headers`, `caption`, and `table-format`.
 
 ## Development
 
