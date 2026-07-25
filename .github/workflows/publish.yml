@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -27,13 +28,12 @@ jobs:
         run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
       - name: Publish to PyPI
         env:
-          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: |
-          if [[ -n "$PYPI_PASSWORD" ]]; then
-            UV_PUBLISH_USERNAME="${PYPI_USERNAME:-__token__}" \
-              UV_PUBLISH_PASSWORD="$PYPI_PASSWORD" \
-              uv publish
+          token="${PYPI_API_TOKEN:-$PYPI_TOKEN}"
+          if [[ -n "$token" ]]; then
+            UV_PUBLISH_TOKEN="$token" uv publish
           else
             uv publish
           fi
